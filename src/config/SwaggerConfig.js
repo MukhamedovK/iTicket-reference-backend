@@ -11,7 +11,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:9000", // Replace with your API server URL
+        url: "https://iticket-reference-backend.onrender.com", // Replace with your API server URL
       },
     ],
   },

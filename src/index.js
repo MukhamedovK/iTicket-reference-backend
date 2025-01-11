@@ -6,6 +6,8 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./config/SwaggerConfig");
 const connectDB = require("./config/database");
 
+const AuthRouter = require("./routes/AuthRouter")
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -25,6 +27,7 @@ app.use(
 
 // routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/test-api", AuthRouter)
 
 // Start server
 app.listen(PORT, () => {
