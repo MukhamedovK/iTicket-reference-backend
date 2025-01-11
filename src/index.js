@@ -25,8 +25,10 @@ app.use(
   })
 );
 
-// routes
+// swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Routes
 app.use("/test-api", AuthRouter)
 
 // Start server
