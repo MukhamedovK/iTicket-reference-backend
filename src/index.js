@@ -1,22 +1,30 @@
-const express = require("express");
-const swaggerUi = require("swagger-ui-express");
 require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 
 const swaggerDocs = require("./config/SwaggerConfig");
-const connectDB = require("./config/database")
+const connectDB = require("./config/database");
 
 const app = express();
-const PORT = 9000;
+const PORT = process.env.PORT || 8000;
 
-
-// connect to database 
-connectDB()
+// connect to database
+connectDB();
 
 // Middleware
 app.use(express.json());
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// CORS
+app.use(
+  cors({
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    origin: ["http://localhost:3000"],
+  })
+);
 
+// routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Start server
 app.listen(PORT, () => {
