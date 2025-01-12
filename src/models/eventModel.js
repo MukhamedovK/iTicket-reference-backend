@@ -10,7 +10,7 @@ const eventModel = new mongoose.Schema(
       latitude: { type: String, required: false },
       longitude: { type: String, required: false },
       venueName: { type: String, required: true },
-      address: { type: String, required: false },
+      address: { type: String, required: true },
       phoneNumber: { type: String, required: false },
     },
     events: [
@@ -19,14 +19,14 @@ const eventModel = new mongoose.Schema(
           type: String,
           required: false,
           default: function () {
-            return `${this.name.toUpperCase()} (${this.ageAndLanguage.age})`;
+            return `${this.name?.toUpperCase()} (${this.ageAndLanguage?.age})`;
           },
         },
         venueName: {
           type: String,
           required: false,
           default: function () {
-            return this.location.venueName;
+            return this.location?.venueName;
           },
         },
         date: { type: Date, required: true },
