@@ -3,31 +3,36 @@ const mongoose = require("mongoose");
 const eventModel = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: true,
+      en: { type: String, required: false },
+      ru: { type: String, required: false },
+      uz: { type: String, required: true },
     },
     location: {
       latitude: { type: String, required: false },
       longitude: { type: String, required: false },
-      venueName: { type: String, required: true },
-      address: { type: String, required: true },
+      venueName: {
+        en: { type: String, required: false },
+        ru: { type: String, required: false },
+        uz: { type: String, required: true },
+      },
+      address: {
+        en: { type: String, required: false },
+        ru: { type: String, required: false },
+        uz: { type: String, required: true },
+      },
       phoneNumber: { type: String, required: false },
     },
     events: [
       {
         name: {
-          type: String,
-          required: false,
-          default: function () {
-            return `${this.name?.toUpperCase()} (${this.ageAndLanguage?.age})`;
-          },
+          en: { type: String, required: false },
+          ru: { type: String, required: false },
+          uz: { type: String, required: true },
         },
         venueName: {
-          type: String,
-          required: false,
-          default: function () {
-            return this.location?.venueName;
-          },
+          en: { type: String, required: false },
+          ru: { type: String, required: false },
+          uz: { type: String, required: true },
         },
         date: { type: Date, required: true },
         time: {
@@ -36,31 +41,31 @@ const eventModel = new mongoose.Schema(
         },
       },
     ],
-    seats: [
-      {
-        area: { type: String, required: true },
-        sector: {type: String, required: true},
-        seatNumber: { type: [Number], required: true },
-        rowNumber: { type: [Number], required: true },
-        price: { type: Number, required: true },
-        availability: { type: Boolean, required: true, default: true },
-      },
-    ],
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: "category",
+      ref: "categories",
       required: true,
     },
-    is2D: { type: Boolean, required: false, default: false },
-    bannerImage: { type: String, required: true },
-    cardImage: { type: String, required: true },
-    aboutEvent: {
-      type: String,
+    hall: {
+      type: mongoose.Schema.ObjectId,
+      ref: "halls",
       required: false,
+    },
+    is2D: { type: Boolean, required: false, default: false },
+    bannerImage: { type: String, required: false },
+    cardImage: { type: [String], required: false },
+    aboutEvent: {
+      en: { type: String, required: false },
+      ru: { type: String, required: false },
+      uz: { type: String, required: false },
     },
     ageAndLanguage: {
       age: { type: String, required: false },
-      language: { type: String, required: false },
+      language: {
+        en: { type: String, required: false },
+        ru: { type: String, required: false },
+        uz: { type: String, required: false },
+      },
     },
   },
   {
