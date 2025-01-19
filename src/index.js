@@ -25,7 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, "./uploads")))
 app.use(
   cors({
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    origin: ["http://localhost:3000", "https://localhost:8000"],
+    origin: ["http://localhost:3000", "https://localhost:8000", "https://iticket-git-main-ai-ahmads-projects.vercel.app"],
   })
 );
 
