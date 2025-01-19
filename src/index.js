@@ -7,7 +7,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./config/SwaggerConfig");
 const connectDB = require("./config/database");
 
-const AuthRouter = require("./routes/authRouter")
 const EventRouter = require("./routes/eventRouter")
 const CategoryRouter = require("./routes/categoryRouter")
 
