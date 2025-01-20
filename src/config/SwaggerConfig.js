@@ -1,8 +1,8 @@
-require('dotenv').config()
+require("dotenv").config();
 const swaggerJsDoc = require("swagger-jsdoc");
 const path = require("path");
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 
 const swaggerOptions = {
   definition: {
@@ -17,8 +17,22 @@ const swaggerOptions = {
         url: "https://iticket-reference-backend.onrender.com",
       },
       {
-        url: `http://localhost:${PORT}`
-      }
+        url: `http://localhost:${PORT}`,
+      },
+    ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        BearerAuth: [],
+      },
     ],
   },
   apis: [path.join(__dirname, "../routes/*.js")],

@@ -19,7 +19,7 @@ const hallModel = new mongoose.Schema({
       availability: {
         type: String,
         required: true,
-        enums: ["available", "reserved", "sold"],
+        enum: ["available", "reserved", "sold"],
       },
       price: { type: Number, required: true },
     },
