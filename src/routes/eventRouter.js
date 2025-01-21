@@ -8,6 +8,7 @@ const {
   deleteEvent,
 } = require("../controllers/eventController");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
+const authMiddleware = require("../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -241,6 +242,7 @@ router.get("/:id", getEvent);
  */
 router.post(
   "/",
+  authMiddleware,
   uploadMiddleware("events", [
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
@@ -279,6 +281,7 @@ router.post(
  */
 router.put(
   "/:id",
+  authMiddleware,
   uploadMiddleware("events", [
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
@@ -305,6 +308,6 @@ router.put(
  *       200:
  *         description: Event deleted
  */
-router.delete("/:id", deleteEvent);
+router.delete("/:id", authMiddleware, deleteEvent);
 
 module.exports = router;

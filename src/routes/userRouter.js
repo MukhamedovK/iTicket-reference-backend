@@ -5,6 +5,7 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
+const authMiddleware = require("../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -149,7 +150,7 @@ router.get("/:id", getUser);
  *       404:
  *         description: User not found
  */
-router.put("/:id", updateUser);
+router.put("/:id", authMiddleware, updateUser);
 
 /**
  * @swagger
@@ -170,6 +171,6 @@ router.put("/:id", updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/:id", deleteUser);
+router.delete("/:id", authMiddleware, deleteUser);
 
 module.exports = router;

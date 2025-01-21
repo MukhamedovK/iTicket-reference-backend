@@ -6,7 +6,6 @@ const swaggerUi = require("swagger-ui-express");
 
 const swaggerDocs = require("./config/SwaggerConfig");
 const connectDB = require("./config/database");
-const authMiddleware = require("./middleware/authMiddleware");
 
 const EventRouter = require("./routes/eventRouter");
 const CategoryRouter = require("./routes/categoryRouter");
@@ -39,9 +38,9 @@ app.use(
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
-app.use("/api/v1/events", authMiddleware, EventRouter);
-app.use("/api/v1/categories", authMiddleware, CategoryRouter);
-app.use("/api/v1/users", authMiddleware, UserRouter);
+app.use("/api/v1/events", EventRouter);
+app.use("/api/v1/categories", CategoryRouter);
+app.use("/api/v1/users", UserRouter);
 app.use("/api/v1", AuthRouter);
 
 // Start server

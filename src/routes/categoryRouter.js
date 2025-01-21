@@ -6,6 +6,7 @@ const {
   updateCategory,
   deleteCategory,
 } = require("../controllers/categoryController");
+const authMiddleware = require("../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -108,7 +109,7 @@ router.get("/:id", getCategoryById);
  *             schema:
  *               $ref: '#/components/schemas/Category'
  */
-router.post("/", createCategory);
+router.post("/", authMiddleware, createCategory);
 
 /**
  * @swagger
@@ -139,7 +140,7 @@ router.post("/", createCategory);
  *       404:
  *         description: Category not found
  */
-router.put("/:id", updateCategory);
+router.put("/:id", authMiddleware, updateCategory);
 
 /**
  * @swagger
@@ -160,6 +161,6 @@ router.put("/:id", updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete("/:id", deleteCategory);
+router.delete("/:id", authMiddleware, deleteCategory);
 
 module.exports = router;
