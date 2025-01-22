@@ -18,6 +18,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *       type: object
  *       required:
  *         - name
+ *         - price
  *         - location
  *         - events
  *         - category
@@ -36,6 +37,15 @@ const authMiddleware = require("../middleware/authMiddleware");
  *             uz:
  *               type: string
  *               description: Event name in Uzbek (required)
+ *         price:
+ *           type: object
+ *           properties:
+ *             minPrice:
+ *               type: number
+ *               description: Minimum price of event
+ *             maxPrice:
+ *               type: number
+ *               description: Maximum price of event
  *         location:
  *           type: object
  *           properties:
@@ -125,6 +135,8 @@ const authMiddleware = require("../middleware/authMiddleware");
  *           description: Banner image
  *         cardImage:
  *           type: array
+ *           items:
+ *             type: string
  *           description: Card images
  *         aboutEvent:
  *           type: object

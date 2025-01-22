@@ -7,6 +7,10 @@ const eventModel = new mongoose.Schema(
       ru: { type: String, required: false },
       uz: { type: String, required: true },
     },
+    price: {
+      minPrice: { type: Number, required: true},
+      maxPrice: { type: Number, required: true},
+    },
     location: {
       latitude: { type: String, required: false },
       longitude: { type: String, required: false },
