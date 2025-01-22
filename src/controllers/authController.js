@@ -1,6 +1,7 @@
 require("dotenv").config();
 const Auth = require("../models/authModel");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-secret-key";
 
