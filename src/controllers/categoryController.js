@@ -5,8 +5,8 @@ const getCategories = async (req, res) => {
   const lang = req.query.lang;
   try {
     const categories = await Category.find();
-    const localizedCategories = languageConverter(categories, lang)
-    
+    const localizedCategories = languageConverter(categories, lang);
+
     res.status(200).json({ success: true, data: localizedCategories });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -19,11 +19,11 @@ const getCategoryById = async (req, res) => {
     const category = await Category.findById(req.params.id);
     if (!category) {
       return res
-      .status(404)
-      .json({ success: false, message: "Category not found" });
+        .status(404)
+        .json({ success: false, message: "Category not found" });
     }
-    const localizedCategories = languageConverter(category, lang)
-    
+    const localizedCategories = languageConverter(category, lang);
+
     res.status(200).json({ success: true, data: localizedCategories });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -32,8 +32,13 @@ const getCategoryById = async (req, res) => {
 
 const createCategory = async (req, res) => {
   try {
-    const category = new Category(req.body);
-    await category.save();
+    const isExists = await Category.exists(req.body.name);
+    if (isExists)
+      return res
+        .status(400)
+        .json({ success: false, message: "Category already exists" });
+
+    const category = await Category.create(req.body);
     res.status(201).json({ success: true, data: category });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

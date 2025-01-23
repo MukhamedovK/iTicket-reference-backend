@@ -8,6 +8,7 @@ const swaggerDocs = require("./config/SwaggerConfig");
 const connectDB = require("./config/database");
 
 const EventRouter = require("./routes/eventRouter");
+const filterRouter = require("./routes/filterRouter");
 const CategoryRouter = require("./routes/categoryRouter");
 const UserRouter = require("./routes/userRouter");
 const AuthRouter = require("./routes/authRouter");
@@ -39,10 +40,11 @@ app.use(
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
+app.use("/api/v1", AuthRouter);
+app.use("/api/v1", filterRouter);
 app.use("/api/v1/events", EventRouter);
 app.use("/api/v1/categories", CategoryRouter);
 app.use("/api/v1/users", UserRouter);
-app.use("/api/v1", AuthRouter);
 
 // Start server
 app.listen(PORT, () => {
