@@ -235,18 +235,18 @@ router.get("/:id", getEvent);
  * /api/v1/events:
  *   post:
  *     summary: Create a new event
- *     description: Add a new event to the database
+ *     description: Add a new event to the database with optional file uploads for banner and card images.
  *     tags:
  *       - Events
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/Event'
  *     responses:
  *       201:
- *         description: Event created
+ *         description: Event created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -266,26 +266,26 @@ router.post(
  * @swagger
  * /api/v1/events/{id}:
  *   put:
- *     summary: Update an event
- *     description: Update an existing event by its ID
+ *     summary: Update an existing event
+ *     description: Update an event in the database with optional file uploads for banner and card images.
  *     tags:
  *       - Events
  *     parameters:
  *       - name: id
  *         in: path
- *         description: Event ID
+ *         description: ID of the event to update
  *         required: true
  *         schema:
  *           type: string
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/Event'
  *     responses:
  *       200:
- *         description: Event updated
+ *         description: Event updated successfully
  *         content:
  *           application/json:
  *             schema:

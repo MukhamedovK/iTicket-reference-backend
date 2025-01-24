@@ -1,5 +1,9 @@
 const Event = require("../models/eventModel");
+const fs = require("fs");
+const path = require("path");
 const { languageConverter } = require("../services/langConverter");
+const deleteFile = require("../services/deleteFile");
+const imageUrlCreator = require("../services/imageUrlCreator");
 
 const getEvents = async (req, res) => {
   const lang = req.query.lang;
@@ -36,16 +40,22 @@ const getEvent = async (req, res) => {
 
 const createEvent = async (req, res) => {
   try {
-    let { cardImage, bannerImage } = req.body;
+    let cardImage, bannerImage;
 
-    if (typeof cardImage !== "string" && typeof bannerImage !== "string") {
-      cardImage = req.files["cardImage"]
-        ? req.files["cardImage"].map((file) => file.path)
-        : [];
-      bannerImage = req.files["bannerImage"]
-        ? req.files["bannerImage"][0].path
-        : "";
-    }
+    const bannerImageFilename = req.files["bannerImage"]
+      ? req.files["bannerImage"][0].filename
+      : null;
+    const cardImageFilenames = req.files["cardImage"]
+      ? req.files["cardImage"].map((file) => file.filename)
+      : [];
+
+    if (cardImageFilenames)
+      cardImage = cardImageFilenames.map((filename) =>
+        imageUrlCreator(filename, "events")
+      );
+    if (bannerImageFilename)
+      bannerImage = imageUrlCreator(bannerImageFilename, "events");
+    
     const newEvent = await Event.create({
       ...req?.body,
       cardImage,
@@ -62,21 +72,25 @@ const createEvent = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
+  let cardImage, bannerImage;
   try {
-    let { cardImage, bannerImage } = req.body;
+    const bannerImageFilename = req.files["bannerImage"]
+      ? req.files["bannerImage"][0].filename
+      : null;
+    const cardImageFilenames = req.files["cardImage"]
+      ? req.files["cardImage"].map((file) => file.filename)
+      : [];
 
-    if (typeof cardImage !== "string" && typeof bannerImage !== "string") {
-      cardImage = req.files["cardImage"]
-        ? req.files["cardImage"].map((file) => file.path)
-        : [];
-      bannerImage = req.files["bannerImage"]
-        ? req.files["bannerImage"][0].path
-        : "";
-    }
+    if (cardImageFilenames)
+      cardImage = cardImageFilenames.map((filename) =>
+        imageUrlCreator(filename, "events")
+      );
+    if (bannerImageFilename)
+      bannerImage = imageUrlCreator(bannerImageFilename, "events");
 
     const event = await Event.findByIdAndUpdate(
-      req?.params?.id,
-      { ...req?.body, cardImage, bannerImage },
+      req.params.id,
+      { ...req.body, cardImage, bannerImage },
       {
         new: true,
       }
@@ -98,12 +112,19 @@ const updateEvent = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
   try {
-    const event = await Event.findByIdAndDelete(req?.params?.id);
+    const event = await Event.findByIdAndDelete(req.params.id);
+
     if (!event) {
       return res
         .status(404)
         .json({ success: false, message: "Event not found" });
     }
+
+    if (event.bannerImage) deleteFile(event.bannerImage);
+
+    if (event.cardImage)
+      event.cardImage.forEach((filePath) => deleteFile(filePath));
+
     res.status(200).json({ success: true, message: "Event deleted" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
