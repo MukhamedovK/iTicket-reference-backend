@@ -132,11 +132,13 @@ const authMiddleware = require("../middleware/authMiddleware");
  *           description: Whether the event is in 2D (optional)
  *         bannerImage:
  *           type: string
+ *           format: binary
  *           description: Banner image
  *         cardImage:
  *           type: array
  *           items:
  *             type: string
+ *             format: binary
  *           description: Card images
  *         aboutEvent:
  *           type: object
@@ -241,7 +243,7 @@ router.get("/:id", getEvent);
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Event'
  *     responses:
@@ -251,10 +253,12 @@ router.get("/:id", getEvent);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Bad request, invalid input data
  */
 router.post(
   "/",
-  authMiddleware,
+  // authMiddleware,
   uploadMiddleware("events", [
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
@@ -280,7 +284,7 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Event'
  *     responses:
@@ -290,6 +294,10 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: Event not found
+ *       400:
+ *         description: Bad request, invalid input data
  */
 router.put(
   "/:id",

@@ -1,9 +1,8 @@
 const Event = require("../models/eventModel");
-const fs = require("fs");
-const path = require("path");
 const { languageConverter } = require("../services/langConverter");
 const deleteFile = require("../services/deleteFile");
 const imageUrlCreator = require("../services/imageUrlCreator");
+
 
 const getEvents = async (req, res) => {
   const lang = req.query.lang;
@@ -55,9 +54,9 @@ const createEvent = async (req, res) => {
       );
     if (bannerImageFilename)
       bannerImage = imageUrlCreator(bannerImageFilename, "events");
-    
+
     const newEvent = await Event.create({
-      ...req?.body,
+      ...req.body,
       cardImage,
       bannerImage,
     });

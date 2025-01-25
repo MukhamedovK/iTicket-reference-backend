@@ -8,8 +8,8 @@ const eventModel = new mongoose.Schema(
       uz: { type: String, required: true },
     },
     price: {
-      minPrice: { type: Number, required: true},
-      maxPrice: { type: Number, required: true},
+      minPrice: { type: Number, required: false},
+      maxPrice: { type: Number, required: false},
     },
     location: {
       latitude: { type: String, required: false },
@@ -56,8 +56,8 @@ const eventModel = new mongoose.Schema(
       required: false,
     },
     is2D: { type: Boolean, required: false, default: false },
-    bannerImage: { type: String, required: false },
-    cardImage: { type: [String], required: false },
+    bannerImage: { type: String, required: true },
+    cardImage: { type: [String], required: true },
     aboutEvent: {
       en: { type: String, required: false },
       ru: { type: String, required: false },
