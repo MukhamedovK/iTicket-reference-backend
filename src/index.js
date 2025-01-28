@@ -13,6 +13,7 @@ const CategoryRouter = require("./routes/categoryRouter");
 const UserRouter = require("./routes/userRouter");
 const AuthRouter = require("./routes/authRouter");
 const addsRouter = require("./routes/addsRouter");
+const bannerRouter = require("./routes/bannerRouter");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -48,6 +49,7 @@ app.use("/api/v1/events", EventRouter);
 app.use("/api/v1/categories", CategoryRouter);
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/adds", addsRouter);
+app.use("/api/v1/banners", bannerRouter)
 
 // Start server
 app.listen(PORT, () => {
