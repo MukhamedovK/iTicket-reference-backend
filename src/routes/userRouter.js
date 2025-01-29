@@ -1,12 +1,11 @@
 const router = require("express").Router();
-const {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-} = require("../controllers/userController");
-const { filterUsersByRole } = require("../controllers/filterController");
+
+const authModel = require("../models/authModel");
 const authMiddleware = require("../middleware/authMiddleware");
+const { filterUsersByRole } = require("../controllers/filterController");
+const { crudCreator } = require("../controllers/crudController");
+
+const authController = crudCreator(authModel);
 
 /**
  * @swagger
@@ -30,6 +29,10 @@ const authMiddleware = require("../middleware/authMiddleware");
  *         password:
  *           type: string
  *           description: The password of the user (hashed)
+ *         role:
+ *           type: string
+ *           enum: [admin, user]
+ *           description: The role of the user
  *         birthDate:
  *           type: string
  *           format: date
@@ -77,6 +80,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *         - email
  *         - phoneNumber
  *         - password
+ *         - role
  */
 
 /**
@@ -95,7 +99,32 @@ const authMiddleware = require("../middleware/authMiddleware");
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-router.get("/", authMiddleware, getUsers);
+router.get("/", authMiddleware, authController.getAll);
+
+/**
+ * @swagger
+ * /api/v1/users/get-by-role:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user role (admin, user)
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
+router.get("/get-by-role", authMiddleware, filterUsersByRole);
 
 /**
  * @swagger
@@ -120,7 +149,7 @@ router.get("/", authMiddleware, getUsers);
  *       404:
  *         description: User not found
  */
-router.get("/:id", authMiddleware, getUser);
+router.get("/:id", authMiddleware, authController.getOne);
 
 /**
  * @swagger
@@ -151,7 +180,7 @@ router.get("/:id", authMiddleware, getUser);
  *       404:
  *         description: User not found
  */
-router.put("/:id", authMiddleware, updateUser);
+router.put("/:id", authMiddleware, authController.update);
 
 /**
  * @swagger
@@ -172,31 +201,6 @@ router.put("/:id", authMiddleware, updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/:id", authMiddleware, deleteUser);
-
-/**
- * @swagger
- * /api/v1/users/get-by-role:
- *   get:
- *     summary: Get all users
- *     tags: [Users]
- *     parameters:
- *       - in: query
- *         name: role
- *         schema:
- *           type: string
- *         required: true
- *         description: The user role (admin, user)
- *     responses:
- *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- */
-router.get("/get-by-role", authMiddleware, filterUsersByRole);
+router.delete("/:id", authMiddleware, authController.remove);
 
 module.exports = router;

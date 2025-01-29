@@ -1,8 +1,8 @@
 const router = require("express").Router();
 
-const { crudCreator } = require("../services/crudController");
 const Calendar = require("../models/calendarModel");
 const authMiddleware = require("../middleware/authMiddleware");
+const { crudCreator } = require("../controllers/crudController");
 
 const calendarController = crudCreator(Calendar);
 

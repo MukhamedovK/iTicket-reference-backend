@@ -1,15 +1,15 @@
-const express = require("express");
-const {
-  getBanners,
-  getBanner,
-  createBanner,
-  updateBanner,
-  deleteBanner,
-} = require("../controllers/bannerController");
+const router = require("express").Router();
+
+const bannerModel = require("../models/bannerModel");
 const authMiddleware = require("../middleware/authMiddleware");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
+const { crudCreator } = require("../controllers/crudController");
 
-const router = express.Router();
+const bannerController = crudCreator(bannerModel, {
+  useImages: true,
+  imageFields: ["image"],
+  imageFolder: "banners",
+});
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Banner'
  */
-router.get("/", getBanners);
+router.get("/", bannerController.getAll);
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ router.get("/", getBanners);
  *       404:
  *         description: Banner not found
  */
-router.get("/:id", getBanner);
+router.get("/:id", bannerController.getOne);
 
 /**
  * @swagger
@@ -122,7 +122,7 @@ router.post(
   "/",
   authMiddleware,
   uploadMiddleware("banners", [{ name: "image", maxCount: 1 }]),
-  createBanner
+  bannerController.create
 );
 
 /**
@@ -164,7 +164,7 @@ router.put(
   "/:id",
   authMiddleware,
   uploadMiddleware("banners", [{ name: "image", maxCount: 1 }]),
-  updateBanner
+  bannerController.update
 );
 
 /**
@@ -186,6 +186,6 @@ router.put(
  *       404:
  *         description: Banner not found
  */
-router.delete("/:id", authMiddleware, deleteBanner);
+router.delete("/:id", authMiddleware, bannerController.remove);
 
 module.exports = router;

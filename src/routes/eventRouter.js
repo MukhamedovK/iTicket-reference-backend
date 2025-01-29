@@ -7,8 +7,19 @@ const {
   updateEvent,
   deleteEvent,
 } = require("../controllers/eventController");
+const eventModel = require("../models/eventModel");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
+
+const { crudCreator } = require("../controllers/crudController");
+
+const eventController = crudCreator(eventModel, {
+  useLang: true,
+  useImages: true,
+  imageFields: ["bannerImage", "cardImage"],
+  imageFolder: "events",
+  populateFields: [{ path: "category" }, { path: "area" }, { path: "area.hall" }, {path: "area.hall.ticketCategory"}, {path: "area.hall.ticketCategory.ticketCategoryName"}],
+});
 
 /**
  * @swagger
@@ -16,160 +27,88 @@ const authMiddleware = require("../middleware/authMiddleware");
  *   schemas:
  *     Event:
  *       type: object
- *       required:
- *         - name
- *         - price
- *         - location
- *         - events
- *         - category
- *         - bannerImage
- *         - cardImage
  *       properties:
- *         name:
+ *         title:
  *           type: object
  *           properties:
  *             en:
  *               type: string
- *               description: Event name in English
  *             ru:
  *               type: string
- *               description: Event name in Russian
  *             uz:
  *               type: string
- *               description: Event name in Uzbek (required)
- *         price:
- *           type: object
- *           properties:
- *             minPrice:
- *               type: number
- *               description: Minimum price of event
- *             maxPrice:
- *               type: number
- *               description: Maximum price of event
- *         location:
- *           type: object
- *           properties:
- *             latitude:
- *               type: string
- *               description: Latitude of the venue
- *             longitude:
- *               type: string
- *               description: Longitude of the venue
- *             venueName:
- *               type: object
- *               properties:
- *                 en:
- *                   type: string
- *                   description: Venue name in English
- *                 ru:
- *                   type: string
- *                   description: Venue name in Russian
- *                 uz:
- *                   type: string
- *                   description: Venue name in Uzbek (required)
- *             address:
- *               type: object
- *               properties:
- *                 en:
- *                   type: string
- *                   description: Address in English
- *                 ru:
- *                   type: string
- *                   description: Address in Russian
- *                 uz:
- *                   type: string
- *                   description: Address in Uzbek (required)
- *             phoneNumber:
- *               type: string
- *               description: Phone number of the venue
- *         events:
+ *           required:
+ *             - uz
+ *         area:
+ *           type: string
+ *           description: ID of the area
+ *           example: "60c72b2f5f1b2c001c8b9f63"
+ *         organization:
+ *           type: string
+ *         date:
  *           type: array
  *           items:
  *             type: object
  *             properties:
- *               name:
- *                 type: object
- *                 properties:
- *                   en:
- *                     type: string
- *                     description: Event name in English
- *                   ru:
- *                     type: string
- *                     description: Event name in Russian
- *                   uz:
- *                     type: string
- *                     description: Event name in Uzbek
- *               venueName:
- *                 type: object
- *                 properties:
- *                   en:
- *                     type: string
- *                     description: Venue name in English
- *                   ru:
- *                     type: string
- *                     description: Venue name in Russian
- *                   uz:
- *                     type: string
- *                     description: Venue name in Uzbek
  *               date:
  *                 type: string
  *                 format: date-time
- *                 description: Event date
  *               time:
  *                 type: object
  *                 properties:
- *                   startTime:
+ *                   start:
  *                     type: string
- *                     description: Event start time
- *                   endTime:
+ *                   end:
  *                     type: string
- *                     description: Event end time
  *         category:
  *           type: string
- *           description: Category ID of the event
+ *           description: Category ID
  *         is2D:
  *           type: boolean
- *           description: Whether the event is in 2D (optional)
+ *           default: false
  *         bannerImage:
  *           type: string
- *           format: binary
- *           description: Banner image
  *         cardImage:
  *           type: array
  *           items:
  *             type: string
- *             format: binary
- *           description: Card images
  *         aboutEvent:
  *           type: object
  *           properties:
  *             en:
  *               type: string
- *               description: Description in English
  *             ru:
  *               type: string
- *               description: Description in Russian
  *             uz:
  *               type: string
- *               description: Description in Uzbek
  *         ageAndLanguage:
  *           type: object
  *           properties:
  *             age:
  *               type: string
- *               description: Age restriction
  *             language:
  *               type: object
  *               properties:
  *                 en:
  *                   type: string
- *                   description: Language in English
  *                 ru:
  *                   type: string
- *                   description: Language in Russian
  *                 uz:
  *                   type: string
- *                   description: Language in Uzbek
+ *       required:
+ *         - title
+ *         - area
+ *         - date
+ *         - category
+ *         - bannerImage
+ *         - cardImage
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Events
+ *   description: Event management
  */
 
 /**
@@ -177,20 +116,10 @@ const authMiddleware = require("../middleware/authMiddleware");
  * /api/v1/events:
  *   get:
  *     summary: Get all events
- *     description: Retrieve a list of all events
- *     tags:
- *       - Events
- *     parameters:
- *       - in: query
- *         name: lang
- *         required: false
- *         description: Language of the categories
- *         schema:
- *           type: string
- *           example: uz
+ *     tags: [Events]
  *     responses:
  *       200:
- *         description: A list of events
+ *         description: List of events
  *         content:
  *           application/json:
  *             schema:
@@ -198,37 +127,30 @@ const authMiddleware = require("../middleware/authMiddleware");
  *               items:
  *                 $ref: '#/components/schemas/Event'
  */
-router.get("/", getEvents);
+router.get("/", eventController.getAll);
 
 /**
  * @swagger
  * /api/v1/events/{id}:
  *   get:
  *     summary: Get an event by ID
- *     description: Retrieve a single event by its ID
- *     tags:
- *       - Events
+ *     tags: [Events]
  *     parameters:
- *       - name: id
- *         in: path
- *         description: Event ID
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: The event ID
  *         schema:
  *           type: string
- *       - in: query
- *         name: lang
- *         required: false
- *         description: Language of the categories
- *         schema:
- *           type: string
- *           example: uz
  *     responses:
  *       200:
- *         description: An event
+ *         description: Event details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: Event not found
  */
 router.get("/:id", getEvent);
 
@@ -237,9 +159,7 @@ router.get("/:id", getEvent);
  * /api/v1/events:
  *   post:
  *     summary: Create a new event
- *     description: Add a new event to the database with optional file uploads for banner and card images.
- *     tags:
- *       - Events
+ *     tags: [Events]
  *     requestBody:
  *       required: true
  *       content:
@@ -248,13 +168,11 @@ router.get("/:id", getEvent);
  *             $ref: '#/components/schemas/Event'
  *     responses:
  *       201:
- *         description: Event created successfully
+ *         description: Event created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Event'
- *       400:
- *         description: Bad request, invalid input data
  */
 router.post(
   "/",
@@ -270,15 +188,13 @@ router.post(
  * @swagger
  * /api/v1/events/{id}:
  *   put:
- *     summary: Update an existing event
- *     description: Update an event in the database with optional file uploads for banner and card images.
- *     tags:
- *       - Events
+ *     summary: Update an event by ID
+ *     tags: [Events]
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the event to update
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: The event ID
  *         schema:
  *           type: string
  *     requestBody:
@@ -289,15 +205,13 @@ router.post(
  *             $ref: '#/components/schemas/Event'
  *     responses:
  *       200:
- *         description: Event updated successfully
+ *         description: Event updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Event'
  *       404:
  *         description: Event not found
- *       400:
- *         description: Bad request, invalid input data
  */
 router.put(
   "/:id",
@@ -313,20 +227,20 @@ router.put(
  * @swagger
  * /api/v1/events/{id}:
  *   delete:
- *     summary: Delete an event
- *     description: Delete an event by its ID
- *     tags:
- *       - Events
+ *     summary: Delete an event by ID
+ *     tags: [Events]
  *     parameters:
- *       - name: id
- *         in: path
- *         description: Event ID
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: The event ID
  *         schema:
  *           type: string
  *     responses:
  *       200:
  *         description: Event deleted
+ *       404:
+ *         description: Event not found
  */
 router.delete("/:id", authMiddleware, deleteEvent);
 

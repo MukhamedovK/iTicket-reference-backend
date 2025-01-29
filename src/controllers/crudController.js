@@ -3,11 +3,12 @@ const crudCreator = (Model, options = {}) => {
     useLang = false,
     useImages = false,
     imageFields = [],
-    populateFields = "",
+    imageFolder = "",
+    populateFields = [],
   } = options;
-  const { languageConverter } = require("./langConverter");
-  const deleteFile = require("./deleteFile");
-  const imageUrlCreator = require("./imageUrlCreator");
+  const { languageConverter } = require("../services/langConverter");
+  const deleteFile = require("../services/deleteFile");
+  const imageUrlCreator = require("../services/imageUrlCreator");
 
   return {
     getAll: async (req, res) => {
@@ -47,14 +48,13 @@ const crudCreator = (Model, options = {}) => {
         if (useImages) {
           imageFields.forEach((field) => {
             if (req.files?.[field]) {
-              images[field] = Array.isArray(req.files[field])
+              const imageUrls = Array.isArray(req.files[field])
                 ? req.files[field].map((file) =>
-                    imageUrlCreator(file.filename, Model.collection.name)
+                    imageUrlCreator(file.filename, imageFolder)
                   )
-                : imageUrlCreator(
-                    req.files[field][0].filename,
-                    Model.collection.name
-                  );
+                : [imageUrlCreator(req.files[field][0].filename, imageFolder)];
+
+              images[field] = imageUrls.length === 1 ? imageUrls[0] : imageUrls;
             }
           });
         }
@@ -72,14 +72,13 @@ const crudCreator = (Model, options = {}) => {
         if (useImages) {
           imageFields.forEach((field) => {
             if (req.files?.[field]) {
-              images[field] = Array.isArray(req.files[field])
+              const imageUrls = Array.isArray(req.files[field])
                 ? req.files[field].map((file) =>
-                    imageUrlCreator(file.filename, Model.collection.name)
+                    imageUrlCreator(file.filename, imageFolder)
                   )
-                : imageUrlCreator(
-                    req.files[field][0].filename,
-                    Model.collection.name
-                  );
+                : [imageUrlCreator(req.files[field][0].filename, imageFolder)];
+
+              images[field] = imageUrls.length === 1 ? imageUrls[0] : imageUrls;
             }
           });
         }

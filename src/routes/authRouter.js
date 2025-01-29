@@ -85,12 +85,17 @@ router.post("/login", loginUser);
  *               password:
  *                 type: string
  *                 description: User's password.
+ *               role:
+ *                 type: string
+ *                 enum: [admin, user]
+ *                 description: User's role.
  *             example:
  *               firstName: "John"
  *               lastName: "Doe"
  *               email: "johndoe@example.com"
  *               phoneNumber: "1234567890"
- *               password: "SecurePass123!"
+ *               password: "password"
+ *               role: "user"
  *     responses:
  *       201:
  *         description: Registration successful.

@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const {
-  getCategories,
-  getCategoryById,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} = require("../controllers/categoryController");
+
+const categoryModel = require("../models/categoryModel");
 const authMiddleware = require("../middleware/authMiddleware");
+const { crudCreator } = require("../controllers/crudController");
+
+const categoryController = crudCreator(categoryModel, {
+  useLang: true,
+});
 
 /**
  * @swagger
@@ -55,7 +55,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *               items:
  *                 $ref: '#/components/schemas/Category'
  */
-router.get("/", getCategories);
+router.get("/", categoryController.getAll);
 
 /**
  * @swagger
@@ -87,7 +87,7 @@ router.get("/", getCategories);
  *       404:
  *         description: Category not found
  */
-router.get("/:id", getCategoryById);
+router.get("/:id", categoryController.getOne);
 
 /**
  * @swagger
@@ -109,7 +109,7 @@ router.get("/:id", getCategoryById);
  *             schema:
  *               $ref: '#/components/schemas/Category'
  */
-router.post("/", authMiddleware, createCategory);
+router.post("/", authMiddleware, categoryController.create);
 
 /**
  * @swagger
@@ -140,7 +140,7 @@ router.post("/", authMiddleware, createCategory);
  *       404:
  *         description: Category not found
  */
-router.put("/:id", authMiddleware, updateCategory);
+router.put("/:id", authMiddleware, categoryController.update);
 
 /**
  * @swagger
@@ -161,6 +161,6 @@ router.put("/:id", authMiddleware, updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete("/:id", authMiddleware, deleteCategory);
+router.delete("/:id", authMiddleware, categoryController.remove);
 
 module.exports = router;

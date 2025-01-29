@@ -1,13 +1,15 @@
 const router = require("express").Router();
-const {
-  getAdds,
-  getAdd,
-  createAdd,
-  updateAdd,
-  deleteAdd,
-} = require("../controllers/addsController");
+
+const addsModel = require("../models/addsModel");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
+const { crudCreator } = require("../controllers/crudController");
+
+const addController = crudCreator(addsModel, {
+  useImages: true,
+  imageFields: ["image"],
+  imageFolder: "adds",
+});
 
 /**
  * @swagger
@@ -63,7 +65,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *       500:
  *         description: Internal Server Error
  */
-router.get("/", getAdds);
+router.get("/", addController.getAll);
 
 /**
  * @swagger
@@ -95,7 +97,7 @@ router.get("/", getAdds);
  *       500:
  *         description: Internal Server Error
  */
-router.get("/:id", getAdd);
+router.get("/:id", addController.getOne);
 
 /**
  * @swagger
@@ -136,7 +138,7 @@ router.post(
   "/",
   authMiddleware,
   uploadMiddleware("adds", [{ name: "image", maxCount: 1 }]),
-  createAdd
+  addController.create
 );
 
 /**
@@ -185,7 +187,7 @@ router.put(
   "/:id",
   authMiddleware,
   uploadMiddleware("adds", [{ name: "image", maxCount: 1 }]),
-  updateAdd
+  addController.update
 );
 
 /**
@@ -218,6 +220,6 @@ router.put(
  *       500:
  *         description: Internal Server Error
  */
-router.delete("/:id", authMiddleware, deleteAdd);
+router.delete("/:id", authMiddleware, addController.remove);
 
 module.exports = router;
