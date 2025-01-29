@@ -5,6 +5,7 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
+const { filterUsersByRole } = require("../controllers/filterController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 /**
@@ -94,7 +95,7 @@ const authMiddleware = require("../middleware/authMiddleware");
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-router.get("/", getUsers);
+router.get("/", authMiddleware, getUsers);
 
 /**
  * @swagger
@@ -119,7 +120,7 @@ router.get("/", getUsers);
  *       404:
  *         description: User not found
  */
-router.get("/:id", getUser);
+router.get("/:id", authMiddleware, getUser);
 
 /**
  * @swagger
@@ -172,5 +173,30 @@ router.put("/:id", authMiddleware, updateUser);
  *         description: User not found
  */
 router.delete("/:id", authMiddleware, deleteUser);
+
+/**
+ * @swagger
+ * /api/v1/users/get-by-role:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user role (admin, user)
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
+router.get("/get-by-role", authMiddleware, filterUsersByRole);
 
 module.exports = router;

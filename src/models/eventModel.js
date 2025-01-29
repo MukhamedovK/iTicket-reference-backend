@@ -2,46 +2,23 @@ const mongoose = require("mongoose");
 
 const eventModel = new mongoose.Schema(
   {
-    name: {
+    title: {
       en: { type: String, required: false },
       ru: { type: String, required: false },
       uz: { type: String, required: true },
     },
-    price: {
-      minPrice: { type: Number, required: false},
-      maxPrice: { type: Number, required: false},
-    },
-    location: {
-      latitude: { type: String, required: false },
-      longitude: { type: String, required: false },
-      venueName: {
-        en: { type: String, required: false },
-        ru: { type: String, required: false },
-        uz: { type: String, required: true },
-      },
-      address: {
-        en: { type: String, required: false },
-        ru: { type: String, required: false },
-        uz: { type: String, required: true },
-      },
-      phoneNumber: { type: String, required: false },
-    },
-    events: [
+    area: { type: mongoose.Types.ObjectId, required: true, ref: "areas" },
+    organization: { type: String, required: false },
+    date: [
       {
-        name: {
-          en: { type: String, required: false },
-          ru: { type: String, required: false },
-          uz: { type: String, required: true },
+        date: {
+          type: Date,
+          required: true,
+          default: Date.now().toLocaleString(),
         },
-        venueName: {
-          en: { type: String, required: false },
-          ru: { type: String, required: false },
-          uz: { type: String, required: true },
-        },
-        date: { type: Date, required: true },
         time: {
-          startTime: { type: String, required: true },
-          endTime: { type: String, required: true },
+          start: { type: String, required: true },
+          end: { type: String, required: true },
         },
       },
     ],
@@ -49,11 +26,6 @@ const eventModel = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "categories",
       required: true,
-    },
-    hall: {
-      type: mongoose.Schema.ObjectId,
-      ref: "halls",
-      required: false,
     },
     is2D: { type: Boolean, required: false, default: false },
     bannerImage: { type: String, required: true },

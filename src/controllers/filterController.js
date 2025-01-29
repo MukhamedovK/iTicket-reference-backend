@@ -1,4 +1,5 @@
 const Event = require("../models/eventModel");
+const User = require("../models/authModel");
 const { languageConverter } = require("../services/langConverter");
 
 const filterEventByCategory = async (req, res) => {
@@ -22,4 +23,14 @@ const filterEventByCategory = async (req, res) => {
   }
 };
 
-module.exports = { filterEventByCategory };
+const filterUsersByRole = async (req, res) => {
+  const { role } = req.query;
+  try {
+    const usersByRole = await User.find({ role: role });
+    res.status(200).json(usersByRole);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = { filterEventByCategory, filterUsersByRole };

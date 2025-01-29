@@ -258,7 +258,7 @@ router.get("/:id", getEvent);
  */
 router.post(
   "/",
-  // authMiddleware,
+  authMiddleware,
   uploadMiddleware("events", [
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
