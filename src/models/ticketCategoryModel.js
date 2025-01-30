@@ -13,13 +13,18 @@ const ticketCategoryModel = new mongoose.Schema({
   area: [
     {
       sector: {
-        status: { type: String, required: true },
-        name: { type: String, required: true },
+        status: { type: String, required: false },
+        name: {
+          en: { type: String, required: false },
+          ru: { type: String, required: false },
+          uz: { type: String, required: true },
+        },
       },
       status: {
         type: String,
         required: true,
         enum: ["available", "reserved", "sold"],
+        default: "available",
       },
       row: { type: String, required: true },
       seat: { type: String, required: true },

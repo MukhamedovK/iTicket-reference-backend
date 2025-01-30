@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 
 const ticketCategoryNameModel = new mongoose.Schema({
   name: {
-    en: { type: String, required: true },
-    ru: { type: String, required: true },
+    en: { type: String, required: false },
+    ru: { type: String, required: false },
     uz: { type: String, required: true },
   }
 })

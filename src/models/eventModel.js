@@ -28,8 +28,8 @@ const eventModel = new mongoose.Schema(
       required: true,
     },
     is2D: { type: Boolean, required: false, default: false },
-    bannerImage: { type: String, required: true },
-    cardImage: { type: [String], required: true },
+    bannerImage: { type: String, required: false },
+    cardImage: { type: [String], required: false },
     aboutEvent: {
       en: { type: String, required: false },
       ru: { type: String, required: false },

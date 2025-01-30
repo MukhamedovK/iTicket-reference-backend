@@ -1,11 +1,19 @@
 const mongoose = require("mongoose");
 
 const areaModel = new mongoose.Schema({
-  country: { type: String, required: true },
-  city: { type: String, required: true },
+  country: {
+    en: { type: String, required: false },
+    ru: { type: String, required: false },
+    uz: { type: String, required: true },
+  },
+  city: {
+    en: { type: String, required: false },
+    ru: { type: String, required: false },
+    uz: { type: String, required: true },
+  },
   hall: { type: mongoose.Types.ObjectId, required: true, ref: "halls" },
-  lat: { type: String, required: true },
-  lon: { type: String, required: true },
+  lat: { type: String, required: false },
+  lon: { type: String, required: false },
   phoneNumber: { type: String, required: false },
 });
 

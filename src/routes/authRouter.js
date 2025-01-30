@@ -25,7 +25,7 @@ const { loginUser, registerUser } = require("../controllers/authController");
  *                 description: User's password.
  *             example:
  *               email: "user@example.com"
- *               password: "Password123!"
+ *               password: "password"
  *     responses:
  *       200:
  *         description: Login successful.

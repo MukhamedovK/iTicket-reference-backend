@@ -1,12 +1,18 @@
 const router = require("express").Router();
-const hallModel = require("../models/hallModel");
+const areaModel = require("../models/areaModel");
 const authMiddleware = require("../middleware/authMiddleware");
 const { crudCreator } = require("../controllers/crudController");
 
-const hallController = crudCreator(hallModel, {
+const areaController = crudCreator(areaModel, {
   useLang: true,
   populateFields: [
-    { path: "ticketCategory", populate: { path: "ticketCategoryName" } },
+    {
+      path: "hall",
+      populate: {
+        path: "ticketCategory",
+        populate: { path: "ticketCategoryName" },
+      },
+    },
   ],
 });
 
@@ -14,64 +20,73 @@ const hallController = crudCreator(hallModel, {
  * @swagger
  * components:
  *   schemas:
- *     Hall:
+ *     Area:
  *       type: object
  *       properties:
- *         area:
+ *         country:
  *           type: object
  *           properties:
  *             en:
  *               type: string
- *               description: Area name in English
- *               example: "Theater of Muqimi"
+ *               description: Country name in English
+ *               example: "Uzbekistan"
  *             ru:
  *               type: string
- *               description: Area name in Russian
- *               example: "Театр Мукими"
+ *               description: Country name in Russian
+ *               example: "Узбекистан"
  *             uz:
  *               type: string
- *               description: Area name in Uzbek
- *               example: "Muqimi teatri"
- *         hallName:
+ *               description: Country name in Uzbek
+ *               example: "O'zbekiston"
+ *         city:
  *           type: object
  *           properties:
  *             en:
  *               type: string
- *               description: Hall name in English
- *               example: "hall-1"
+ *               description: City name in English
+ *               example: "Tashkent"
  *             ru:
  *               type: string
- *               description: Hall name in Russian
- *               example: "зал-1"
+ *               description: City name in Russian
+ *               example: "Ташкент"
  *             uz:
  *               type: string
- *               description: Hall name in Uzbek
- *               example: "zal-1"
- *         ticketCategory:
- *           type: array
- *           properties:
- *             type: string
- *             description: Reference to TicketCategory ID
- *             example: "64fa2d49b26a2f001c3d5d89"
+ *               description: City name in Uzbek
+ *               example: "Toshkent"
+ *         hall:
+ *           type: string
+ *           description: Reference to Hall ID
+ *           example: "64fa2d49b26a2f001c3d5d90"
+ *         lat:
+ *           type: string
+ *           description: Latitude coordinate
+ *           example: "41.2995"
+ *         lon:
+ *           type: string
+ *           description: Longitude coordinate
+ *           example: "69.2401"
+ *         phoneNumber:
+ *           type: string
+ *           description: Contact phone number
+ *           example: "+998901234567"
  *       required:
- *         - area
- *         - hallName
- *         - ticketCategory
+ *         - city
+ *         - hall
  */
 
 /**
  * @swagger
  * tags:
- *   name: Halls
- *   description: API for managing halls
+ *   name: Areas
+ *   description: API for managing areas
  */
 
 /**
  * @swagger
- * /api/v1/halls:
+ * /api/v1/areas:
  *   get:
- *     summary: Get all halls
- *     tags: [Halls]
+ *     summary: Get all areas
+ *     tags: [Areas]
  *     parameters:
  *       - name: lang
  *         in: query
@@ -82,31 +97,31 @@ const hallController = crudCreator(hallModel, {
  *           example: uz
  *     responses:
  *       200:
- *         description: A list of halls
+ *         description: A list of areas
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Hall'
+ *                 $ref: '#/components/schemas/Area'
  *       500:
  *         description: Server error
  */
-router.get("/", hallController.getAll);
+router.get("/", areaController.getAll);
 
 /**
  * @swagger
- * /api/v1/halls/{id}:
+ * /api/v1/areas/{id}:
  *   get:
- *     summary: Get a hall by ID
- *     tags: [Halls]
+ *     summary: Get an area by ID
+ *     tags: [Areas]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Hall ID
+ *         description: Area ID
  *       - name: lang
  *         in: query
  *         description: The language to localize the response in
@@ -116,37 +131,37 @@ router.get("/", hallController.getAll);
  *           example: uz
  *     responses:
  *       200:
- *         description: A hall object
+ *         description: An area object
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Hall'
+ *               $ref: '#/components/schemas/Area'
  *       404:
- *         description: Hall not found
+ *         description: Area not found
  *       500:
  *         description: Server error
  */
-router.get("/:id", hallController.getOne);
+router.get("/:id", areaController.getOne);
 
 /**
  * @swagger
- * /api/v1/halls:
+ * /api/v1/areas:
  *   post:
- *     summary: Create a new hall
- *     tags: [Halls]
+ *     summary: Create a new area
+ *     tags: [Areas]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Hall'
+ *             $ref: '#/components/schemas/Area'
  *     responses:
  *       201:
- *         description: Hall created successfully
+ *         description: Area created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Hall'
+ *               $ref: '#/components/schemas/Area'
  *       400:
  *         description: Invalid input
  *       401:
@@ -154,64 +169,64 @@ router.get("/:id", hallController.getOne);
  *       500:
  *         description: Server error
  */
-router.post("/", authMiddleware, hallController.create);
+router.post("/", authMiddleware, areaController.create);
 
 /**
  * @swagger
- * /api/v1/halls/{id}:
+ * /api/v1/areas/{id}:
  *   put:
- *     summary: Update a hall
- *     tags: [Halls]
+ *     summary: Update an area
+ *     tags: [Areas]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Hall ID
+ *         description: Area ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Hall'
+ *             $ref: '#/components/schemas/Area'
  *     responses:
  *       200:
- *         description: Hall updated successfully
+ *         description: Area updated successfully
  *       400:
  *         description: Invalid input
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Hall not found
+ *         description: Area not found
  *       500:
  *         description: Server error
  */
-router.put("/:id", authMiddleware, hallController.update);
+router.put("/:id", authMiddleware, areaController.update);
 
 /**
  * @swagger
- * /api/v1/halls/{id}:
+ * /api/v1/areas/{id}:
  *   delete:
- *     summary: Delete a hall
- *     tags: [Halls]
+ *     summary: Delete an area
+ *     tags: [Areas]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Hall ID
+ *         description: Area ID
  *     responses:
  *       200:
- *         description: Hall deleted successfully
+ *         description: Area deleted successfully
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Hall not found
+ *         description: Area not found
  *       500:
  *         description: Server error
  */
-router.delete("/:id", authMiddleware, hallController.remove);
+router.delete("/:id", authMiddleware, areaController.remove);
 
 module.exports = router;

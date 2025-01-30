@@ -18,7 +18,19 @@ const eventController = crudCreator(eventModel, {
   useImages: true,
   imageFields: ["bannerImage", "cardImage"],
   imageFolder: "events",
-  populateFields: [{ path: "category" }, { path: "area" }, { path: "area.hall" }, {path: "area.hall.ticketCategory"}, {path: "area.hall.ticketCategory.ticketCategoryName"}],
+  populateFields: [
+    { path: "category" },
+    {
+      path: "area",
+      populate: {
+        path: "hall",
+        populate: {
+          path: "ticketCategory",
+          populate: { path: "ticketCategoryName" },
+        },
+      },
+    },
+  ],
 });
 
 /**
@@ -100,8 +112,6 @@ const eventController = crudCreator(eventModel, {
  *         - area
  *         - date
  *         - category
- *         - bannerImage
- *         - cardImage
  */
 
 /**
@@ -117,6 +127,14 @@ const eventController = crudCreator(eventModel, {
  *   get:
  *     summary: Get all events
  *     tags: [Events]
+ *     parameters:
+ *       - name: lang
+ *         in: query
+ *         description: The language to localize the response in
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: uz
  *     responses:
  *       200:
  *         description: List of events
@@ -142,6 +160,13 @@ router.get("/", eventController.getAll);
  *         description: The event ID
  *         schema:
  *           type: string
+ *       - name: lang
+ *         in: query
+ *         description: The language to localize the response in
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: uz
  *     responses:
  *       200:
  *         description: Event details
@@ -152,7 +177,7 @@ router.get("/", eventController.getAll);
  *       404:
  *         description: Event not found
  */
-router.get("/:id", getEvent);
+router.get("/:id", eventController.getOne);
 
 /**
  * @swagger
@@ -181,7 +206,7 @@ router.post(
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
   ]),
-  createEvent
+  eventController.create
 );
 
 /**
@@ -220,7 +245,7 @@ router.put(
     { name: "bannerImage", maxCount: 1 },
     { name: "cardImage", maxCount: 5 },
   ]),
-  updateEvent
+  eventController.update
 );
 
 /**
@@ -242,6 +267,6 @@ router.put(
  *       404:
  *         description: Event not found
  */
-router.delete("/:id", authMiddleware, deleteEvent);
+router.delete("/:id", authMiddleware, eventController.remove);
 
 module.exports = router;
