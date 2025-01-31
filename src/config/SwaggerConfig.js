@@ -14,7 +14,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://iticket-reference-backend.onrender.com",
+        url: "https://api.taketicket.uz",
       },
       {
         url: `http://localhost:${PORT}`,
