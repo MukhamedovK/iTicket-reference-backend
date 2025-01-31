@@ -36,9 +36,9 @@ app.use(
   cors({
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     origin: [
-      "http://localhost:3000",
-      "http://localhost:8000",
-      "https://iticket-git-main-ai-ahmads-projects.vercel.app",
+      // "http://localhost:3000",
+      // "http://localhost:8000",
+      // "https://iticket-git-main-ai-ahmads-projects.vercel.app",
       "*",
     ],
   })
