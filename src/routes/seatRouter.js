@@ -194,3 +194,6 @@ router.patch('/seats/:id/reserve', async (req, res) => {
 });
 
 module.exports = router;
+
+
+
