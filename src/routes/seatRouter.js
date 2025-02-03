@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const mongoose = require('mongoose');
 const Seat = require('../models/SeatModel');
 const router = express.Router();
@@ -7,7 +7,8 @@ const router = express.Router();
  * @swagger
  * /api/v1/seats:
  *   get:
- *     summary: Get all seats with optional filtering
+ *     summary: Get all seats
+ *     description: Retrieve a list of all seats with optional filtering.
  *     parameters:
  *       - in: query
  *         name: status
@@ -41,6 +42,18 @@ router.get('/seats', async (req, res) => {
  * /api/v1/seats/{id}:
  *   get:
  *     summary: Get seat by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Seat ID
+ *     responses:
+ *       200:
+ *         description: Seat details
+ *       404:
+ *         description: Seat not found
  */
 router.get('/seats/:id', async (req, res) => {
     try {
@@ -57,6 +70,30 @@ router.get('/seats/:id', async (req, res) => {
  * /api/v1/seats:
  *   post:
  *     summary: Create a new seat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               row:
+ *                 type: number
+ *               seat:
+ *                 type: number
+ *               sector:
+ *                 type: number
+ *               seat_type:
+ *                 type: string
+ *               map_type:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               color:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Created seat
  */
 router.post('/seats', async (req, res) => {
     try {
@@ -74,6 +111,21 @@ router.post('/seats', async (req, res) => {
  * /api/v1/seats/{id}:
  *   put:
  *     summary: Update seat details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Updated seat
  */
 router.put('/seats/:id', async (req, res) => {
     try {
@@ -90,6 +142,15 @@ router.put('/seats/:id', async (req, res) => {
  * /api/v1/seats/{id}:
  *   delete:
  *     summary: Delete a seat
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Seat deleted
  */
 router.delete('/seats/:id', async (req, res) => {
     try {
@@ -106,6 +167,15 @@ router.delete('/seats/:id', async (req, res) => {
  * /api/v1/seats/{id}/reserve:
  *   patch:
  *     summary: Reserve a seat
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Seat reserved
  */
 router.patch('/seats/:id/reserve', async (req, res) => {
     try {
