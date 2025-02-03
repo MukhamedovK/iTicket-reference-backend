@@ -18,6 +18,7 @@ const calendarRouter = require("./routes/calendarRouter");
 const ticketCategoryNameRouter = require("./routes/ticketCategoryNameRouter");
 const ticketCategoryRouter = require("./routes/ticketCategoryRouter");
 const hallRouter = require("./routes/hallRouter");
+const seatRoutes = require("./routes/seatRouter");
 const areaRouter = require("./routes/areaRouter");
 
 const app = express();
@@ -51,6 +52,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Routes
 app.use("/api/v1", AuthRouter);
 app.use("/api/v1", filterRouter);
+app.use('/api/v1', seatRoutes);
 app.use("/api/v1/events", EventRouter);
 app.use("/api/v1/categories", CategoryRouter);
 app.use("/api/v1/users", UserRouter);

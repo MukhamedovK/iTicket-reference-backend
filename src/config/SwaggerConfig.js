@@ -12,6 +12,7 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "Documentation for the backend APIs",
     },
+    basePath: "/api/v1",
     servers: [
       {
         url: "https://api.taketicket.uz",
