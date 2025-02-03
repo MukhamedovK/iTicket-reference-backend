@@ -1,63 +1,133 @@
 const router = require("express").Router();
-const { filterEventByCategory } = require("../controllers/filterController");
+const { filterEvents } = require("../controllers/filterController");
 
 /**
  * @swagger
- * /api/v1/events/filter-by-category:
+ * /api/v1/events/filter-events:
  *   get:
- *     summary: Filter events by category
- *     description: Get a list of events filtered by category
+ *     summary: Получить список событий с фильтрацией
  *     tags:
  *       - Events
  *     parameters:
- *       - name: category
- *         in: query
- *         description: The category ID of events to filter by
- *         required: true
- *         type: string
- *       - name: lang
- *         in: query
- *         description: The language to localize the response in
- *         required: false
+ *       - in: query
+ *         name: categoryId
  *         schema:
  *           type: string
- *           example: uz
+ *         description: ID категории события
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Начальная дата фильтрации событий (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Конечная дата фильтрации событий (YYYY-MM-DD)
+ *       - in: query
+ *         name: place
+ *         schema:
+ *           type: string
+ *         description: Название места
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Минимальная цена билета
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Максимальная цена билета
+ *       - in: query
+ *         name: lang
+ *         schema:
+ *           type: string
+ *           enum: [en, ru, uz]
+ *         required: true
+ *         description: Язык
  *     responses:
  *       200:
- *         description: A list of events filtered by category
+ *         description: Успешный ответ с массивом событий
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Event'
- *       404:
- *         description: Category does not exist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Whether the request was successful
- *                 message:
- *                   type: string
- *                   description: The error message
+ *                 type: object
+ *                 properties:
+ *                   title:
+ *                     type: object
+ *                     properties:
+ *                       en:
+ *                         type: string
+ *                       ru:
+ *                         type: string
+ *                       uz:
+ *                         type: string
+ *                   area:
+ *                     type: string
+ *                     description: ID локации
+ *                     example: "60c72b2f5f1b2c001c8b9f63"
+ *                   organization:
+ *                     type: string
+ *                   date:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         date:
+ *                           type: string
+ *                           format: date-time
+ *                         time:
+ *                           type: object
+ *                           properties:
+ *                             start:
+ *                               type: string
+ *                             end:
+ *                               type: string
+ *                   category:
+ *                     type: string
+ *                     description: ID категории
+ *                   is2D:
+ *                     type: boolean
+ *                     default: false
+ *                   bannerImage:
+ *                     type: string
+ *                   cardImage:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   aboutEvent:
+ *                     type: object
+ *                     properties:
+ *                       en:
+ *                         type: string
+ *                       ru:
+ *                         type: string
+ *                       uz:
+ *                         type: string
+ *                   ageAndLanguage:
+ *                     type: object
+ *                     properties:
+ *                       age:
+ *                         type: string
+ *                       language:
+ *                         type: object
+ *                         properties:
+ *                           en:
+ *                             type: string
+ *                           ru:
+ *                             type: string
+ *                           uz:
+ *                             type: string
+ *       400:
+ *         description: Ошибка в запросе
  *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Whether the request was successful
- *                 message:
- *                   type: string
- *                   description: The error message
+ *         description: Внутренняя ошибка сервера
  */
-router.get("/events/filter-by-category", filterEventByCategory);
+router.get("/events/filter-events", filterEvents);
 
 module.exports = router;
