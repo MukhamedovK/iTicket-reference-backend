@@ -1,9 +1,8 @@
 const Event = require("../models/eventModel");
 const User = require("../models/authModel");
 const { languageConverter } = require("../services/langConverter");
-const hallModel = require("../models/hallModel");
 const areaModel = require("../models/areaModel");
-const ticketCategoryModel = require("../models/ticketCategoryModel");
+const seatModel = require("../models/SeatModel");
 
 const filterUsersByRole = async (req, res) => {
   const { role } = req.query;
@@ -26,14 +25,7 @@ const filterEvents = async (req, res) => {
     }
 
     if (place) {
-      const halls = await hallModel
-        .find({ [`area.${lang}`]: place })
-        .select("_id");
-      const hallIds = halls.map((hall) => hall._id);
-
-      const areas = await areaModel
-        .find({ hall: { $in: hallIds } })
-        .select("_id");
+      const areas = await areaModel.find({ area: place }).select("_id");
       const areaIds = areas.map((area) => area._id);
 
       filter.area = { $in: areaIds };
@@ -47,7 +39,7 @@ const filterEvents = async (req, res) => {
     }
 
     if (minPrice || maxPrice) {
-      const ticketCategories = await ticketCategoryModel
+      const seats = await seatModel
         .find({
           price: {
             ...(minPrice && { $gte: Number(minPrice) }),
@@ -56,15 +48,10 @@ const filterEvents = async (req, res) => {
         })
         .select("_id");
 
-      const ticketCategoryIds = ticketCategories.map((tc) => tc._id);
-
-      const halls = await hallModel
-        .find({ ticketCategory: { $in: ticketCategoryIds } })
-        .select("_id");
-      const hallIds = halls.map((hall) => hall._id);
+      const seatIds = seats.map((tc) => tc._id);
 
       const areas = await areaModel
-        .find({ hall: { $in: hallIds } })
+        .find({ ticketCategory: { $in: seatIds } })
         .select("_id");
       const areaIds = areas.map((area) => area._id);
 
@@ -80,11 +67,7 @@ const filterEvents = async (req, res) => {
       {
         path: "area",
         populate: {
-          path: "hall",
-          populate: {
-            path: "ticketCategory",
-            populate: { path: "ticketCategoryName" },
-          },
+          path: "ticketCategory",
         },
       },
     ]);

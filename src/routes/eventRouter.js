@@ -1,12 +1,5 @@
-const express = require("express");
-const router = express.Router();
-const {
-  getEvent,
-  getEvents,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-} = require("../controllers/eventController");
+const router = require("express").Router();
+
 const eventModel = require("../models/eventModel");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -25,8 +18,7 @@ const eventController = crudCreator(eventModel, {
       populate: {
         path: "hall",
         populate: {
-          path: "ticketCategory",
-          populate: { path: "ticketCategoryName" },
+          path: "ticketCategory"
         },
       },
     },

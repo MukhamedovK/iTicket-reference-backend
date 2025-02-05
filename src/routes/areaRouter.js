@@ -7,11 +7,7 @@ const areaController = crudCreator(areaModel, {
   useLang: true,
   populateFields: [
     {
-      path: "hall",
-      populate: {
-        path: "ticketCategory",
-        populate: { path: "ticketCategoryName" },
-      },
+      path: "ticketCategory",
     },
   ],
 });
@@ -53,10 +49,42 @@ const areaController = crudCreator(areaModel, {
  *               type: string
  *               description: City name in Uzbek
  *               example: "Toshkent"
- *         hall:
- *           type: string
- *           description: Reference to Hall ID
- *           example: "64fa2d49b26a2f001c3d5d90"
+ *         area:
+ *           type: object
+ *           properties:
+ *             en:
+ *               type: string
+ *               description: Area name in English
+ *               example: "Theater of Muqimi"
+ *             ru:
+ *               type: string
+ *               description: Area name in Russian
+ *               example: "Театр Мукими"
+ *             uz:
+ *               type: string
+ *               description: Area name in Uzbek
+ *               example: "Muqimi teatri"
+ *         hallName:
+ *           type: object
+ *           properties:
+ *             en:
+ *               type: string
+ *               description: Hall name in English
+ *               example: "hall-1"
+ *             ru:
+ *               type: string
+ *               description: Hall name in Russian
+ *               example: "зал-1"
+ *             uz:
+ *               type: string
+ *               description: Hall name in Uzbek
+ *               example: "zal-1"
+ *         ticketCategory:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Reference to seat ID
+ *           example: ["64fa2d49b26a2f001c3d5d89"]
  *         lat:
  *           type: string
  *           description: Latitude coordinate
@@ -72,6 +100,9 @@ const areaController = crudCreator(areaModel, {
  *       required:
  *         - city
  *         - hall
+ *         - area
+ *         - hallName
+ *         - ticketCategory
  */
 
 /**
@@ -169,7 +200,7 @@ router.get("/:id", areaController.getOne);
  *       500:
  *         description: Server error
  */
-router.post("/", authMiddleware, areaController.create);
+router.post("/", areaController.create);
 
 /**
  * @swagger
