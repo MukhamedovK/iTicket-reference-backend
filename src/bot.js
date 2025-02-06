@@ -10,6 +10,7 @@ const pendingMessageMap = new Map();
 
 const sendOrderToBot = (orderData) => {
   console.log("Sending order data:", orderData);
+  console.log("ORDER DATA IN BOT: ", orderData)
 
   const amountToDisplay =
     orderData.status === "ОПЛАЧЕНО" && orderData.paymentType !== "Click"
