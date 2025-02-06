@@ -131,7 +131,7 @@ router.put("/:id", async (req, res) => {
 
     res.status(200).json(order.populate("seats.seat"));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -193,9 +193,55 @@ router.put("/:id/remove-seat/:seatId", async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json(updatedOrder.populate(["seats.seat"]));
+    res.status(200).json(updatedOrder.populate("seats.seat"));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/orders/by-user/{id}:
+ *   get:
+ *     summary: Получить заказы по пользователю
+ *     description: Возвращает список заказов для пользователя по его ID.
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID пользователя, для которого нужно получить заказы.
+ *     responses:
+ *       200:
+ *         description: Список заказов пользователя
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Order'
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+router.get("/by-user/:id", async (req, res) => {
+  try {
+    const orders = await orderModel
+      .find({ user: req.params.id })
+      .populate("seats.seat");
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
