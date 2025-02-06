@@ -231,7 +231,6 @@ const createTransaction = async (req, res) => {
 
     order.transactionId = id;
     order.create_time = time;
-    order.amount = amount;
     order.state = 1;
     order.status = "ВЫСТАВЛЕНО";
     order.paymentType = "Payme";

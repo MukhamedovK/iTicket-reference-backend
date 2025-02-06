@@ -12,11 +12,6 @@ const sendOrderToBot = (orderData) => {
   console.log("Sending order data:", orderData);
   console.log("ORDER DATA IN BOT: ", orderData)
 
-  const amountToDisplay =
-    orderData.status === "ОПЛАЧЕНО" && orderData.paymentType !== "Click"
-      ? orderData.amount / 100
-      : orderData.amount;
-
   const formattedAmount = new Intl.NumberFormat("ru-RU", {
     style: "decimal",
     minimumFractionDigits: 2,
