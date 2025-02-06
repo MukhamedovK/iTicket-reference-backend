@@ -27,14 +27,7 @@ const orderController = crudCreator(orderModel, {
  *             type: object
  *             properties:
  *               eventTitle:
- *                 type: object
- *                 properties:
- *                   en:
- *                     type: string
- *                   ru:
- *                     type: string
- *                   uz:
- *                     type: string
+ *                 type: string
  *               date:
  *                 type: string
  *                 format: date
@@ -49,10 +42,7 @@ const orderController = crudCreator(orderModel, {
  *       example:
  *         user: "60c72b2f5f1b2c001c8e4d3b"
  *         seats:
- *           - eventTitle:
- *               en: "Concert"
- *               ru: "Концерт"
- *               uz: "Kontsert"
+ *             eventTitle: "Konsert"
  *             date: "2024-02-06"
  *             startTime: "2024-02-06T18:00:00Z"
  *             cardImage: "https://example.com/image.jpg"
@@ -87,14 +77,7 @@ const orderController = crudCreator(orderModel, {
  *             type: object
  *             properties:
  *               eventTitle:
- *                 type: object
- *                 properties:
- *                   en:
- *                     type: string
- *                   ru:
- *                     type: string
- *                   uz:
- *                     type: string
+ *                 type: string
  *               date:
  *                 type: string
  *                 format: date
