@@ -25,15 +25,40 @@ const sendOrderToBot = (orderData) => {
       ? GROUP_CHAT_ID_PAID
       : GROUP_CHAT_ID_PENDING;
 
-  const message = `
-    🧾 <b>Заказ ${orderData._id}:</b>
-    🔸 <b>Мероприятие:</b> ${decodeURIComponent(orderData.eventTitle)}
-    🔸 <b>Клиент:</b> ${orderData.user.firstName} ${orderData.user.lastName}
-    🔸 <b>Телефон:</b> ${orderData.user.phoneNumber}    
-    ${statusSticker} <b>Статус:</b> ${orderData.status}
+  let seatsInfo = "";
+  orderData.seats.forEach((seat) => {
+    const eventTitle = seat.eventTitle;
+    const area = seat.map_type ? seat.map_type : "Не указана";
+    const category = seat.category ? seat.category : "Не указана";
+    const sector = seat.sector ? seat.sector : "Не указана";
+    const row = seat.row ? seat.row : "Не указана";
+    const seats = seat.seat ? seat.seat : "Не указана";
+    const price = seat.price ? seat.price : "Не указана";
 
-    🇺🇿 <b>Сумма:</b> ${formattedAmount} сум
-  `;
+    seatsInfo += `
+          🔸 <b>Мероприятие:</b> ${decodeURIComponent(eventTitle)}
+          🔸 <b>Зал:</b> ${decodeURIComponent(area)}
+          🔸 <b>Тип билета:</b> ${decodeURIComponent(category)}
+          🔸 <b>Сектор:</b> ${decodeURIComponent(sector)}
+          🔸 <b>Ряд:</b> ${decodeURIComponent(row)}
+          🔸 <b>Место:</b> ${decodeURIComponent(seats)}
+          🔸 <b>Цена:</b> ${new Intl.NumberFormat("ru-RU", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(price)} сум
+          \n
+        `;
+  });
+
+  const message = `
+        🧾 <b>Заказ ${orderData._id}</b>:
+        🔸 <b>Клиент:</b> ${orderData.user.firstName} ${orderData.user.lastName}
+        🔸 <b>Телефон:</b> ${orderData.user.phoneNumber || "Не указан"}
+        ${statusSticker} <b>Статус:</b> ${orderData.status}
+        🇺🇿 <b>Общая Сумма:</b> ${formattedAmount} сум\n
+        ${seatsInfo}
+      `;
 
   bot
     .sendMessage(chatId, message, { parse_mode: "HTML" })

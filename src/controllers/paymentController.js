@@ -288,7 +288,7 @@ const performTransaction = async (req, res) => {
   try {
     let transaction = await Orders.findOne({ transactionId: id }).populate([
       { path: "seats.seat" },
-      { path: "user", select: "email" },
+      { path: "user" },
     ]);
 
     if (!transaction) {
