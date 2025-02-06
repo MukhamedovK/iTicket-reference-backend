@@ -287,9 +287,10 @@ const performTransaction = async (req, res) => {
   }
 
   try {
-    let transaction = await Orders.findOne({ transactionId: id }).populate(
-      "seats.seat"
-    );
+    let transaction = await Orders.findOne({ transactionId: id }).populate([
+      { path: "seats.seat" },
+      { path: "user", select: "email" },
+    ]);
 
     if (!transaction) {
       return res.json({
@@ -328,7 +329,7 @@ const performTransaction = async (req, res) => {
     // await syncOrderWithAmoCRM(updatedOrder)
 
     await sendEmail(
-      transaction.email,
+      transaction.user.email,
       "TakeTicket.UZ - payment was successful!",
       "Siz chiptani muvoffaqiyatli sotib oldingiz!"
     );
