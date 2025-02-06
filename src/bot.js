@@ -28,12 +28,12 @@ const sendOrderToBot = (orderData) => {
   let seatsInfo = "";
   orderData.seats.forEach((seat) => {
     const eventTitle = seat.eventTitle;
-    const area = seat.map_type ? seat.map_type : "Не указана";
-    const category = seat.category ? seat.category : "Не указана";
-    const sector = seat.sector ? seat.sector : "Не указана";
-    const row = seat.row ? seat.row : "Не указана";
-    const seats = seat.seat ? seat.seat : "Не указана";
-    const price = seat.price ? seat.price : "Не указана";
+    const area = seat.seat.map_type ? seat.seat.map_type : "Не указана";
+    const category = seat.seat.category ? seat.seat.category : "Не указана";
+    const sector = seat.seat.sector ? seat.seat.sector : "Не указана";
+    const row = seat.seat.row ? seat.seat.row : "Не указана";
+    const seats = seat.seat.seat ? seat.seat.seat : "Не указана";
+    const price = seat.seat.price ? seat.seat.price : "Не указана";
 
     seatsInfo += `
           🔸 <b>Мероприятие:</b> ${decodeURIComponent(eventTitle)}
