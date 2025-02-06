@@ -56,7 +56,7 @@ const sendOrderToBot = (orderData) => {
         🔸 <b>Клиент:</b> ${orderData.user.firstName} ${orderData.user.lastName}
         🔸 <b>Телефон:</b> ${orderData.user.phoneNumber || "Не указан"}
         ${statusSticker} <b>Статус:</b> ${orderData.status}
-        🇺🇿 <b>Общая Сумма:</b> ${formattedAmount} сум\n
+        🇺🇿 <b>Общая Сумма:</b> ${formattedAmount} сум
         ${seatsInfo}
       `;
 
