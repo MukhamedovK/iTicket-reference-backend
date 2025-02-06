@@ -91,14 +91,16 @@ router.get('/seats/:id', async (req, res) => {
  *                 type: number
  *               color:
  *                 type: string
+ *               category:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Created seat
  */
 router.post('/seats', async (req, res) => {
     try {
-        const { row, seat, sector, seat_type, map_type, price, color } = req.body;
-        const newSeat = new Seat({ row, seat, seat_type, sector, map_type, price, color, status: 'free' });
+        const { row, seat, sector, seat_type, map_type, price, color, category } = req.body;
+        const newSeat = new Seat({ row, seat, seat_type, sector, map_type, category, price, color, status: 'free' });
         await newSeat.save();
         res.status(201).json(newSeat);
     } catch (error) {

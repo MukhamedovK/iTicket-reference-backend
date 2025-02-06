@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const SeatSchema = new mongoose.Schema({
+  category: { type: String, required: true }, // VIP 1
   map_type: {
     // example: Alisher Navoi nomidagi muzey
     type: String,

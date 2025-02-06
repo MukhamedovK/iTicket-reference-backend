@@ -16,7 +16,7 @@ const languageConverter = (
   }
 
   const translated = {};
-  const exceptionKeys = ["_id", "date", "createdAt", "updatedAt"];
+  const exceptionKeys = ["_id", "date", "time", "startTime", "endTime", "createdAt", "updatedAt", "user"];
   for (const key in obj) {
     const value = obj[key];
 
