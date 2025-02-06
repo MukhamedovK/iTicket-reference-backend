@@ -25,16 +25,24 @@ const filterEvents = async (req, res) => {
     }
 
     if (place) {
-      const areas = await areaModel.find({ area: place }).select("_id");
+      const areas = await areaModel
+        .find({
+          $or: [
+            { "area.en": place },
+            { "area.ru": place },
+            { "area.uz": place },
+          ],
+        })
+        .select("_id");
       const areaIds = areas.map((area) => area._id);
 
       filter.area = { $in: areaIds };
     }
 
-    if (startDate && endDate) {
+    if (startDate || endDate) {
       filter["date.date"] = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate),
+        ...(startDate && { $gte: new Date(startDate) }),
+        ...(endDate && { $lte: new Date(endDate) }),
       };
     }
 
@@ -49,16 +57,18 @@ const filterEvents = async (req, res) => {
         .select("_id");
 
       const seatIds = seats.map((tc) => tc._id);
-
-      const areas = await areaModel
-        .find({ ticketCategory: { $in: seatIds } })
-        .select("_id");
-      const areaIds = areas.map((area) => area._id);
-
-      if (filter.area) {
-        filter.area.$in = [...new Set([...filter.area.$in, ...areaIds])];
-      } else {
-        filter.area = { $in: areaIds };
+      
+      if (seatIds.length > 0) {
+        const areas = await areaModel
+          .find({ ticketCategory: { $in: seatIds } })
+          .select("_id");
+        const areaIds = areas.map((area) => area._id);
+  
+        if (filter.area) {
+          filter.area.$in = [...new Set([...filter.area.$in, ...areaIds])];
+        } else {
+          filter.area = { $in: areaIds };
+        }
       }
     }
 

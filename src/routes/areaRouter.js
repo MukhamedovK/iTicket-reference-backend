@@ -200,7 +200,7 @@ router.get("/:id", areaController.getOne);
  *       500:
  *         description: Server error
  */
-router.post("/", areaController.create);
+router.post("/", authMiddleware, areaController.create);
 
 /**
  * @swagger

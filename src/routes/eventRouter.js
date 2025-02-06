@@ -16,10 +16,7 @@ const eventController = crudCreator(eventModel, {
     {
       path: "area",
       populate: {
-        path: "hall",
-        populate: {
-          path: "ticketCategory"
-        },
+        path: "ticketCategory",
       },
     },
   ],
