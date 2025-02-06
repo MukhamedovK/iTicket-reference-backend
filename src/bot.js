@@ -10,13 +10,13 @@ const pendingMessageMap = new Map();
 
 const sendOrderToBot = (orderData) => {
   console.log("Sending order data:", orderData);
-  console.log("ORDER DATA IN BOT: ", orderData)
+  console.log("ORDER DATA IN BOT: ", orderData);
 
   const formattedAmount = new Intl.NumberFormat("ru-RU", {
     style: "decimal",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amountToDisplay || 0);
+  }).format(orderData.amount || 0);
 
   const statusSticker = orderData.status === "ОПЛАЧЕНО" ? "✅" : "🟡";
 
