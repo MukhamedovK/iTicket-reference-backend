@@ -196,6 +196,13 @@ router.put("/:id/remove-seat/:seatId", async (req, res) => {
  *         schema:
  *           type: string
  *         description: ID пользователя, для которого нужно получить заказы.
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [unpaid, paid]
+ *         description: Статус заказа, оплаченные или в корзине.
  *     responses:
  *       200:
  *         description: Список заказов пользователя
@@ -217,11 +224,13 @@ router.put("/:id/remove-seat/:seatId", async (req, res) => {
  *                   example: "Internal Server Error"
  */
 router.get("/by-user/:id", async (req, res) => {
+  const { status } = req.query;
   try {
+    const orderStatus = status === "paid" ? "ОПЛАЧЕНО" : "НЕ ОПЛАЧЕНО";
     const orders = await orderModel
-      .find({ user: req.params.id })
+      .find({ user: req.params.id, status: orderStatus })
       .populate("seats.seat");
-
+    console.log(orders)
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

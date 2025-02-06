@@ -1,4 +1,5 @@
 const Orders = require("../models/orderModel");
+const SeatModel = require("../models/SeatModel");
 
 const sendEmail = require("../services/emailSender");
 const { updateOrderStatus } = require("../bot");
@@ -323,6 +324,15 @@ const performTransaction = async (req, res) => {
     transaction.perform_time = Date.now();
     transaction.status = "ОПЛАЧЕНО";
     await transaction.save();
+
+    const seatIds = transaction.seats.map((s) => s.seat._id);
+
+    const seatsToUpdate = await SeatModel.find({ _id: { $in: seatIds } });
+
+    for (let seat of seatsToUpdate) {
+      seat.status = "occupied";
+      await seat.save();
+    }
 
     updateOrderStatus(transaction);
     // await syncOrderWithAmoCRM(updatedOrder)

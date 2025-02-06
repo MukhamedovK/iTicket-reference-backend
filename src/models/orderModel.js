@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const SeatModel = require("./SeatModel");
 
 const orderModel = new mongoose.Schema({
   user: { type: mongoose.Types.ObjectId, ref: "auth", required: true },
@@ -23,7 +24,6 @@ const orderModel = new mongoose.Schema({
     },
   ],
   transactionId: { type: String, required: false },
-  create_time: { type: String, required: false },
   create_time: { type: Number, required: false },
   perform_time: { type: Number },
   cancel_time: { type: Number },
@@ -44,20 +44,50 @@ const orderModel = new mongoose.Schema({
 orderModel.pre("save", async function (next) {
   await this.populate("seats.seat");
   this.amount = this.seats.reduce((sum, s) => sum + (s.seat.price || 0), 0);
+
   next();
 });
 
-orderModel.post("save", function (doc) {
+orderModel.post("save", async function (doc) {
   const timeLeft = doc.time?.endTime - Date.now();
+  const order = await mongoose.model("orders").findById(doc._id);
+
+  const seatIds = order.seats.map((s) => s.seat._id);
+  const seatsToUpdate = await SeatModel.find({ _id: { $in: seatIds } });
+
+  for (let seat of seatsToUpdate) {
+    seat.status = "reserved";
+    await seat.save();
+  }
 
   if (timeLeft > 0) {
     setTimeout(async () => {
-      const order = await mongoose.model("orders").findById(doc._id);
-      if (order && order.status !== "ОПЛАЧЕНО") {
+      if (
+        order &&
+        order.status !== "ОПЛАЧЕНО" &&
+        order.status !== "ВЫСТАВЛЕНО"
+      ) {
+        for (let seat of seatsToUpdate) {
+          seat.status = "free";
+          await seat.save();
+        }
         await mongoose.model("orders").findByIdAndDelete(doc._id);
         console.log(`Заказ ${doc._id} удалён из-за истечения времени`);
       }
     }, timeLeft);
+  }
+});
+
+orderModel.post("findByIdAndUpdate", async function (doc) {
+  const order = await mongoose.model("orders").findById(doc._id);
+  if (!order) return;
+
+  const seatIds = order.seats.map((s) => s.seat._id);
+  const seatsToUpdate = await SeatModel.find({ _id: { $in: seatIds } });
+
+  for (let seat of seatsToUpdate) {
+    seat.status = "reserved";
+    await seat.save();
   }
 });
 
