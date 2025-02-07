@@ -334,7 +334,7 @@ const performTransaction = async (req, res) => {
       await seat.save();
     }
 
-    updateOrderStatus(transaction);
+    // updateOrderStatus(transaction);
     // await syncOrderWithAmoCRM(updatedOrder)
 
     await sendEmail(

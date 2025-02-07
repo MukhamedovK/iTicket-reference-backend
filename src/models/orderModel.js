@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const SeatModel = require("./SeatModel");
+const { sendOrderToBot } = require("../bot");
 
 const orderModel = new mongoose.Schema({
   user: { type: mongoose.Types.ObjectId, ref: "auth", required: true },
@@ -52,6 +53,8 @@ orderModel.post("save", async function (doc) {
   const timeLeft = doc.time?.endTime - Date.now();
   const order = await mongoose.model("orders").findById(doc._id);
 
+  sendOrderToBot(order);
+
   const seatIds = order.seats.map((s) => s.seat._id);
   const seatsToUpdate = await SeatModel.find({ _id: { $in: seatIds } });
 
@@ -81,6 +84,8 @@ orderModel.post("save", async function (doc) {
 orderModel.post("findByIdAndUpdate", async function (doc) {
   const order = await mongoose.model("orders").findById(doc._id);
   if (!order) return;
+
+  sendOrderToBot(order);
 
   const seatIds = order.seats.map((s) => s.seat._id);
   const seatsToUpdate = await SeatModel.find({ _id: { $in: seatIds } });
