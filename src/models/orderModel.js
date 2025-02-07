@@ -51,7 +51,10 @@ orderModel.pre("save", async function (next) {
 
 orderModel.post("save", async function (doc) {
   const timeLeft = doc.time?.endTime - Date.now();
-  const order = await mongoose.model("orders").findById(doc._id);
+  const order = await mongoose
+    .model("orders")
+    .findById(doc._id)
+    .populate([{ path: "user" }, { path: "seats.seat" }]);
 
   sendOrderToBot(order);
 
@@ -82,7 +85,10 @@ orderModel.post("save", async function (doc) {
 });
 
 orderModel.post("findByIdAndUpdate", async function (doc) {
-  const order = await mongoose.model("orders").findById(doc._id);
+  const order = await mongoose
+    .model("orders")
+    .findById(doc._id)
+    .populate([{ path: "user" }, { path: "seats.seat" }]);
   if (!order) return;
 
   sendOrderToBot(order);
