@@ -20,7 +20,7 @@ const SeatSchema = new mongoose.Schema({
     required: true,
   },
   sector: {
-    type: Number,
+    type: String,
     required: true,
   },
   price: {

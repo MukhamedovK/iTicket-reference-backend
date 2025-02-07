@@ -82,7 +82,7 @@ router.get('/seats/:id', async (req, res) => {
  *               seat:
  *                 type: number
  *               sector:
- *                 type: number
+ *                 type: string
  *               seat_type:
  *                 type: string
  *               map_type:
