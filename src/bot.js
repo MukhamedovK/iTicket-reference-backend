@@ -47,15 +47,14 @@ const sendOrderToBot = (orderData) => {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           }).format(price)} сум
-          \n
         `;
   });
 
   const message = `
         🧾 <b>Заказ ${orderData._id}</b>:
-        🔸 <b>Клиент:</b> ${orderData.user.firstName} ${orderData.user.lastName}
-        🔸 <b>Телефон:</b> ${orderData.user.phoneNumber || "Не указан"}
-        🔸 <b>Почта:</b> ${orderData.user.email || "Не указан"}
+        👤 <b>Клиент:</b> ${orderData.user.firstName} ${orderData.user.lastName}
+        📞 <b>Телефон:</b> ${orderData.user.phoneNumber || "Не указан"}
+        📧 <b>Почта:</b> ${orderData.user.email || "Не указан"}
         ${statusSticker} <b>Статус:</b> ${orderData.status}
         🇺🇿 <b>Общая Сумма:</b> ${formattedAmount} сум
         ${seatsInfo}
