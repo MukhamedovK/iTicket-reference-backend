@@ -40,6 +40,7 @@ app.use(
       "http://localhost:3001",
       "http://localhost:8000",
       "https://iticket-git-main-ai-ahmads-projects.vercel.app",
+      "https://womenforum.uz/dev",
     ],
     credentials: true,
   })
