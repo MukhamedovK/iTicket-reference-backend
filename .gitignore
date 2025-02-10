@@ -1,3 +1,4 @@
 /node_modules
-/src/uploads/*
+/src/uploads/adds
+/src/uploads/banners
 # .env

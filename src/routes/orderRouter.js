@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { crudCreator } = require("../controllers/crudController");
 const orderModel = require("../models/orderModel");
+const SeatModel = require("../models/SeatModel");
 
 const orderController = crudCreator(orderModel, {
   populateFields: [{ path: "user" }, { path: "seats.seat" }],
@@ -33,7 +34,6 @@ const orderController = crudCreator(orderModel, {
  *                 format: date
  *               startTime:
  *                 type: string
- *                 format: date-time
  *               cardImage:
  *                 type: string
  *               seat:
@@ -42,10 +42,10 @@ const orderController = crudCreator(orderModel, {
  *       example:
  *         user: "60c72b2f5f1b2c001c8e4d3b"
  *         seats:
- *             eventTitle: "Konsert"
- *             date: "2024-02-06"
- *             startTime: "2024-02-06T18:00:00Z"
- *             cardImage: "https://example.com/image.jpg"
+ *             eventTitle: "Global Women Forum"
+ *             date: "2025-04-20"
+ *             startTime: "10:00"
+ *             cardImage: "https://api.taketicket.uz/uploads/events/global-women-forum.PNG"
  *             seat: "60c72b2f5f1b2c001c8e4d3c"
  */
 
@@ -83,7 +83,6 @@ const orderController = crudCreator(orderModel, {
  *                 format: date
  *               startTime:
  *                 type: string
- *                 format: date-time
  *               cardImage:
  *                 type: string
  *               seat:
@@ -100,19 +99,35 @@ const orderController = crudCreator(orderModel, {
  *         description: Заказ не найден
  */
 router.put("/:id", async (req, res) => {
-  const { eventTitle, date, startTime, cardImage, seat } = req.body;
+  const {
+    eventTitle = "Global Women Forum",
+    date = new Date("2025-04-20"),
+    startTime = "10:00",
+    cardImage = `${process.env.DOMAIN}/uploads/events/global-women-forum.PNG`,
+    seat,
+  } = req.body;
   try {
-    const order = await orderModel.findById(req.params.id);
+    const order = await orderModel
+      .findById(req.params.id)
+      .populate("seats.seat");
     if (!order) {
       return res.status(404).json({ message: "Заказ не найден" });
     }
 
-    order.seats.push({ eventTitle, date, startTime, cardImage, seat });
+    const seatId = await SeatModel.findOne({ seat_type: seat }).select("_id");
+
+    order.seats.push({
+      eventTitle,
+      date,
+      startTime,
+      cardImage,
+      seat: seatId._id,
+    });
     order.amount = order.seats.reduce((sum, s) => sum + (s.seat.price || 0), 0);
 
     await order.save();
 
-    res.status(200).json(order.populate("seats.seat"));
+    res.status(200).json(order);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -160,25 +175,29 @@ router.put("/:id/remove-seat/:seatId", async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    const updatedSeats = order.seats.filter((s) => s._id.toString() !== seatId);
+    const updatedSeats = order.seats.filter((s) => s.seat.seat_type !== seatId);
 
     const newAmount = updatedSeats.reduce(
       (sum, s) => sum + (s.seat.price || 0),
       0
     );
 
-    const updatedOrder = await orderModel.findByIdAndUpdate(
-      id,
-      {
-        $pull: { seats: { _id: seatId } },
-        $set: { amount: newAmount },
-      },
-      { new: true }
-    );
+    const updatedOrder = await orderModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            seats: updatedSeats,
+            amount: newAmount,
+          },
+        },
+        { new: true }
+      )
+      .populate("seats.seat");
 
-    res.status(200).json(updatedOrder.populate("seats.seat"));
+    res.status(200).json(updatedOrder);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -230,7 +249,7 @@ router.get("/by-user/:id", async (req, res) => {
     const orders = await orderModel
       .find({ user: req.params.id, status: orderStatus })
       .populate("seats.seat");
-    console.log(orders)
+
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

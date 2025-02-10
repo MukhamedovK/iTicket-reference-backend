@@ -15,7 +15,7 @@ const orderModel = new mongoose.Schema({
     {
       eventTitle: { type: String, required: false },
       date: { type: Date, required: false },
-      startTime: { type: Date, required: false },
+      startTime: { type: String, required: false },
       cardImage: { type: String, required: false },
       seat: {
         type: mongoose.Types.ObjectId,

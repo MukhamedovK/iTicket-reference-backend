@@ -331,6 +331,7 @@ const performTransaction = async (req, res) => {
 
     for (let seat of seatsToUpdate) {
       seat.status = "occupied";
+      seat.color = "gray";
       await seat.save();
     }
 
